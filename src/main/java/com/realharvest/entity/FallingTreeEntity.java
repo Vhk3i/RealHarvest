@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -116,10 +117,13 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
             if (rel.getY() > maxHeight) maxHeight = rel.getY();
         }
 
-        // Звук тяжёлого падения дерева
+        // Звук тяжёлого падения и удара о землю
         BlockPos midPos = blockPosition().relative(fallDirection, Math.max(1, maxHeight / 2));
         level.playSound(null, midPos, SoundEvents.WOOD_FALL, SoundSource.BLOCKS, 1.8F, 0.6F);
-        level.playSound(null, midPos, SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.BLOCKS, 0.6F, 0.5F);
+        level.playSound(null, midPos, SoundEvents.GRAVEL_BREAK, SoundSource.BLOCKS, 1.4F, 0.5F);
+
+        // Разрушение ландшафта вдоль линии падения ствола
+        damageTerrainAlongPath(level, maxHeight);
 
         // Урон сущностям вдоль линии падения
         BlockPos endPos = blockPosition().relative(fallDirection, maxHeight + 1);
@@ -149,6 +153,56 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
                 }
             }
         }
+    }
+
+    private void damageTerrainAlongPath(ServerLevel level, int length) {
+        Direction sideDir = fallDirection.getClockWise();
+
+        for (int dist = 1; dist <= length; dist++) {
+            BlockPos center = blockPosition().relative(fallDirection, dist);
+
+            for (int side = -1; side <= 1; side++) {
+                BlockPos col = center.relative(sideDir, side);
+
+                // 1. Сносим хрупкие препятствия на уровне падения и чуть выше
+                for (int dy = 0; dy <= 1; dy++) {
+                    BlockPos target = col.above(dy);
+                    BlockState st = level.getBlockState(target);
+                    if (canSmashBlock(level, target, st)) {
+                        level.destroyBlock(target, true);
+                    }
+                }
+
+                // 2. Повреждаем сам грунт под стволом (борозда в земле и содранный дёрн)
+                BlockPos groundPos = col.below();
+                BlockState ground = level.getBlockState(groundPos);
+                if (isSoftGround(ground)) {
+                    if (side == 0 && level.random.nextFloat() < 0.65F) {
+                        level.destroyBlock(groundPos, true);
+                    } else if (ground.is(Blocks.GRASS_BLOCK)) {
+                        level.setBlock(groundPos, Blocks.COARSE_DIRT.defaultBlockState(), Block.UPDATE_ALL);
+                    }
+                    level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ground),
+                            groundPos.getX() + 0.5, groundPos.getY() + 1.0, groundPos.getZ() + 0.5,
+                            6, 0.3, 0.15, 0.3, 0.08);
+                }
+            }
+        }
+    }
+
+    private boolean canSmashBlock(ServerLevel level, BlockPos pos, BlockState state) {
+        if (state.isAir() || !state.getFluidState().isEmpty()) return false;
+        if (state.hasBlockEntity()) return false; // Не ломаем сундуки, печки и др.
+        float hardness = state.getDestroySpeed(level, pos);
+        return hardness >= 0.0F && hardness <= 2.0F;
+    }
+
+    private boolean isSoftGround(BlockState state) {
+        return state.is(BlockTags.DIRT)
+                || state.is(BlockTags.SAND)
+                || state.is(Blocks.GRAVEL)
+                || state.is(Blocks.SNOW_BLOCK)
+                || state.is(Blocks.CLAY);
     }
 
     @Override
