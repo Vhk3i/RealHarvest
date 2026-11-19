@@ -1,6 +1,7 @@
 package com.realharvest.registry;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.item.SurvivalGuideItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
@@ -29,4 +30,7 @@ public class ModItems {
     public static final RegistryObject<Item> CANNIBAL_SPAWN_EGG =
             ITEMS.register("cannibal_spawn_egg", () -> new ForgeSpawnEggItem(
                     ModEntities.CANNIBAL, 0x7A736A, 0x7D1212, new Item.Properties()));
+
+    public static final RegistryObject<Item> SURVIVAL_GUIDE =
+            ITEMS.register("survival_guide", () -> new SurvivalGuideItem(new Item.Properties().stacksTo(1)));
 }

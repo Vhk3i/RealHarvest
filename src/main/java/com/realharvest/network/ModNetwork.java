@@ -1,6 +1,7 @@
 package com.realharvest.network;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.network.packet.C2SPlaceBlueprintPacket;
 import com.realharvest.network.packet.S2CBlockChipEffectPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +26,12 @@ public class ModNetwork {
                 .encoder(S2CBlockChipEffectPacket::encode)
                 .decoder(S2CBlockChipEffectPacket::decode)
                 .consumerMainThread(S2CBlockChipEffectPacket::handle)
+                .add();
+
+        CHANNEL.messageBuilder(C2SPlaceBlueprintPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SPlaceBlueprintPacket::encode)
+                .decoder(C2SPlaceBlueprintPacket::decode)
+                .consumerMainThread(C2SPlaceBlueprintPacket::handle)
                 .add();
     }
 

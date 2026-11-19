@@ -1,0 +1,80 @@
+{
+  "textures": {
+    "cover": "realharvest:item/survival_guide",
+    "pages": "minecraft:block/birch_planks",
+    "bookmark": "minecraft:block/red_wool",
+    "particle": "realharvest:item/survival_guide"
+  },
+  "elements": [
+    {
+      "name": "bottom_cover",
+      "from": [3, 0, 2],
+      "to": [13, 1, 14],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 2], "texture": "#cover"},
+        "east": {"uv": [0, 0, 16, 2], "texture": "#cover"},
+        "south": {"uv": [0, 0, 16, 2], "texture": "#cover"},
+        "west": {"uv": [0, 0, 16, 2], "texture": "#cover"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#cover"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#cover"}
+      }
+    },
+    {
+      "name": "pages",
+      "from": [3.5, 1, 2.5],
+      "to": [12.5, 3, 13.5],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 4], "texture": "#pages"},
+        "east": {"uv": [0, 0, 16, 4], "texture": "#pages"},
+        "south": {"uv": [0, 0, 16, 4], "texture": "#pages"},
+        "west": {"uv": [0, 0, 16, 4], "texture": "#pages"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#pages"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#pages"}
+      }
+    },
+    {
+      "name": "top_cover",
+      "from": [3, 3, 2],
+      "to": [13, 4, 14],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 2], "texture": "#cover"},
+        "east": {"uv": [0, 0, 16, 2], "texture": "#cover"},
+        "south": {"uv": [0, 0, 16, 2], "texture": "#cover"},
+        "west": {"uv": [0, 0, 16, 2], "texture": "#cover"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#cover"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#cover"}
+      }
+    },
+    {
+      "name": "spine",
+      "from": [2.5, 0, 2],
+      "to": [3.5, 4, 14],
+      "faces": {
+        "north": {"uv": [0, 0, 2, 16], "texture": "#cover"},
+        "south": {"uv": [0, 0, 2, 16], "texture": "#cover"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#cover"},
+        "up": {"uv": [0, 0, 2, 16], "texture": "#cover"},
+        "down": {"uv": [0, 0, 2, 16], "texture": "#cover"}
+      }
+    },
+    {
+      "name": "bookmark",
+      "from": [7, 1.5, 13.5],
+      "to": [8.5, 2.2, 15.5],
+      "faces": {
+        "north": {"uv": [0, 0, 4, 4], "texture": "#bookmark"},
+        "east": {"uv": [0, 0, 4, 4], "texture": "#bookmark"},
+        "south": {"uv": [0, 0, 4, 4], "texture": "#bookmark"},
+        "west": {"uv": [0, 0, 4, 4], "texture": "#bookmark"},
+        "up": {"uv": [0, 0, 4, 4], "texture": "#bookmark"},
+        "down": {"uv": [0, 0, 4, 4], "texture": "#bookmark"}
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": { "rotation": [65, 25, 0], "translation": [0, 2, 1], "scale": [0.7, 0.7, 0.7] },
+    "firstperson_righthand": { "rotation": [35, -35, 15], "translation": [1, 3, 0], "scale": [0.8, 0.8, 0.8] },
+    "gui": { "rotation": [45, 35, 0], "translation": [0, 2, 0], "scale": [1.0, 1.0, 1.0] },
+    "ground": { "translation": [0, 2, 0], "scale": [0.6, 0.6, 0.6] }
+  }
+}
