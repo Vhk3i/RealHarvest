@@ -1,0 +1,11 @@
+{
+  "textures": { "wood": "minecraft:block/spruce_log", "spike": "minecraft:block/oak_planks", "particle": "minecraft:block/spruce_log" },
+  "elements": [
+    { "from": [0, 0, 0], "to": [16, 16, 3], "faces": { "north":{"texture":"#wood"}, "south":{"texture":"#wood"}, "east":{"texture":"#wood"}, "west":{"texture":"#wood"}, "up":{"texture":"#wood"}, "down":{"texture":"#wood"} } },
+    { "from": [2, 3, 3], "to": [4, 5, 13], "faces": { "north":{"texture":"#spike"}, "south":{"texture":"#spike"}, "east":{"texture":"#spike"}, "west":{"texture":"#spike"}, "up":{"texture":"#spike"}, "down":{"texture":"#spike"} } },
+    { "from": [12, 3, 3], "to": [14, 5, 13], "faces": { "north":{"texture":"#spike"}, "south":{"texture":"#spike"}, "east":{"texture":"#spike"}, "west":{"texture":"#spike"}, "up":{"texture":"#spike"}, "down":{"texture":"#spike"} } },
+    { "from": [7, 8, 3], "to": [9, 10, 14], "faces": { "north":{"texture":"#spike"}, "south":{"texture":"#spike"}, "east":{"texture":"#spike"}, "west":{"texture":"#spike"}, "up":{"texture":"#spike"}, "down":{"texture":"#spike"} } },
+    { "from": [2, 12, 3], "to": [4, 14, 13], "faces": { "north":{"texture":"#spike"}, "south":{"texture":"#spike"}, "east":{"texture":"#spike"}, "west":{"texture":"#spike"}, "up":{"texture":"#spike"}, "down":{"texture":"#spike"} } },
+    { "from": [12, 12, 3], "to": [14, 14, 13], "faces": { "north":{"texture":"#spike"}, "south":{"texture":"#spike"}, "east":{"texture":"#spike"}, "west":{"texture":"#spike"}, "up":{"texture":"#spike"}, "down":{"texture":"#spike"} } }
+  ]
+}

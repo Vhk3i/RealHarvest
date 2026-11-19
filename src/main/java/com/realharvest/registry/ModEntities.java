@@ -3,6 +3,7 @@ package com.realharvest.registry;
 import com.realharvest.RealHarvest;
 import com.realharvest.entity.CannibalEntity;
 import com.realharvest.entity.FallingTreeEntity;
+import com.realharvest.entity.MolotovEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
@@ -27,4 +28,12 @@ public class ModEntities {
                     .sized(0.6F, 1.8F)
                     .clientTrackingRange(8)
                     .build("cannibal"));
+
+    public static final RegistryObject<EntityType<MolotovEntity>> MOLOTOV =
+            ENTITIES.register("molotov", () -> EntityType.Builder
+                    .<MolotovEntity>of(MolotovEntity::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build("molotov"));
 }

@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "realharvest:block/effigy" },
+    "lit=true": { "model": "realharvest:block/effigy" }
+  }
+}

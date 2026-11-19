@@ -6,5 +6,9 @@
   "item.realharvest.coal_fragment": "Coal Fragment",
   "item.realharvest.cannibal_spawn_egg": "Cannibal Spawn Egg",
   "item.realharvest.survival_guide": "Survival Guide",
+  "item.realharvest.lighter": "Lighter",
+  "item.realharvest.molotov": "Molotov Cocktail",
+  "block.realharvest.spike_trap": "Spike Trap",
+  "block.realharvest.effigy": "Effigy Totem",
   "entity.realharvest.cannibal": "Cannibal"
 }

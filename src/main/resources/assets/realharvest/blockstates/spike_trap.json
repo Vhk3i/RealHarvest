@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "triggered=false": { "model": "realharvest:block/spike_trap_armed" },
+    "triggered=true": { "model": "realharvest:block/spike_trap_triggered" }
+  }
+}

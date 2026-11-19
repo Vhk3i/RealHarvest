@@ -1,6 +1,8 @@
 package com.realharvest.registry;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.block.EffigyBlock;
+import com.realharvest.block.SpikeTrapBlock;
 import com.realharvest.mining.ChippedBlock;
 import com.realharvest.tree.NotchedLogBlock;
 import net.minecraft.world.level.block.Block;
@@ -25,4 +27,16 @@ public class ModBlocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .dynamicShape()));
+
+    public static final RegistryObject<Block> SPIKE_TRAP = BLOCKS.register("spike_trap",
+            () -> new SpikeTrapBlock(BlockBehaviour.Properties.of()
+                    .strength(1.5f)
+                    .noOcclusion()
+                    .noCollission()));
+
+    public static final RegistryObject<Block> EFFIGY = BLOCKS.register("effigy",
+            () -> new EffigyBlock(BlockBehaviour.Properties.of()
+                    .strength(1.5f)
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(EffigyBlock.LIT) ? 14 : 0)));
 }

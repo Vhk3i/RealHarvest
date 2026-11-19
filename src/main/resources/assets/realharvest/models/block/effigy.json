@@ -1,0 +1,8 @@
+{
+  "textures": { "wood": "minecraft:block/dark_oak_log", "bone": "minecraft:block/bone_block_side", "particle": "minecraft:block/dark_oak_log" },
+  "elements": [
+    { "from": [7, 0, 7], "to": [9, 16, 9], "faces": { "north":{"texture":"#wood"}, "south":{"texture":"#wood"}, "east":{"texture":"#wood"}, "west":{"texture":"#wood"}, "up":{"texture":"#wood"}, "down":{"texture":"#wood"} } },
+    { "from": [3, 10, 7], "to": [13, 12, 9], "faces": { "north":{"texture":"#wood"}, "south":{"texture":"#wood"}, "east":{"texture":"#wood"}, "west":{"texture":"#wood"}, "up":{"texture":"#wood"}, "down":{"texture":"#wood"} } },
+    { "from": [5.5, 12, 5.5], "to": [10.5, 16, 10.5], "faces": { "north":{"texture":"#bone"}, "south":{"texture":"#bone"}, "east":{"texture":"#bone"}, "west":{"texture":"#bone"}, "up":{"texture":"#bone"}, "down":{"texture":"#bone"} } }
+  ]
+}

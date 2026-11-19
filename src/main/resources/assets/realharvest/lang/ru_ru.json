@@ -6,5 +6,9 @@
   "item.realharvest.coal_fragment": "Осколок угля",
   "item.realharvest.cannibal_spawn_egg": "Яйцо призыва аборигена",
   "item.realharvest.survival_guide": "Книжка выживальщика",
+  "item.realharvest.lighter": "Зажигалка",
+  "item.realharvest.molotov": "Коктейль Молотова",
+  "block.realharvest.spike_trap": "Ловушка с шипами",
+  "block.realharvest.effigy": "Пугающее чучело",
   "entity.realharvest.cannibal": "Абориген"
 }
