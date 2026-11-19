@@ -5,6 +5,7 @@ import com.realharvest.network.ModNetwork;
 import com.realharvest.registry.ModBlockEntities;
 import com.realharvest.registry.ModBlocks;
 import com.realharvest.registry.ModEntities;
+import com.realharvest.registry.ModItems;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -22,12 +23,13 @@ public class RealHarvest {
         ModBlocks.BLOCKS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModEntities.ENTITIES.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(ModNetwork::register);
-        LOGGER.info("RealHarvest Phase 2 initialized.");
+        LOGGER.info("RealHarvest fully initialized.");
     }
 }

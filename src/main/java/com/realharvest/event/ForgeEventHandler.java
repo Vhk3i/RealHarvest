@@ -7,18 +7,22 @@ import com.realharvest.mining.VoxelShapeCache;
 import com.realharvest.network.ModNetwork;
 import com.realharvest.network.packet.S2CBlockChipEffectPacket;
 import com.realharvest.registry.ModBlocks;
+import com.realharvest.registry.ModItems;
 import com.realharvest.tree.NotchedLogBlockEntity;
 import com.realharvest.tree.TreeDetector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -83,9 +87,11 @@ public class ForgeEventHandler {
         }
 
         Direction hitSide = player.getDirection().getOpposite();
-        boolean felled = be.addChop(hitSide, 1);
+        int power = (axe.getItem() instanceof TieredItem tiered && tiered.getTier().getLevel() >= 3) ? 2 : 1;
+        boolean felled = be.addChop(hitSide, power);
 
         axe.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        level.playSound(null, pos, SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1.0F, 0.85F);
         ModNetwork.sendToTracking(level, pos, new S2CBlockChipEffectPacket(pos, original));
 
         if (!felled) {
@@ -123,17 +129,48 @@ public class ForgeEventHandler {
             original = be.getOriginalState();
         }
 
+        int chipsPerHit = (pickaxe.getItem() instanceof TieredItem tiered && tiered.getTier().getLevel() >= 2) ? 2 : 1;
         int octant = calculateTargetOctant(level, player, pos);
-        boolean destroyed = be.chipOctant(octant);
+        boolean destroyed = false;
+        int chippedNow = 0;
 
+        for (int i = 0; i < chipsPerHit && !destroyed; i++) {
+            destroyed = be.chipOctant(octant);
+            chippedNow++;
+        }
+
+        dropChipLoot(level, pos, original, chippedNow);
         pickaxe.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        level.playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 0.8F, 1.2F);
         ModNetwork.sendToTracking(level, pos, new S2CBlockChipEffectPacket(pos, original));
 
         if (!destroyed) {
             event.setCanceled(true);
             int remaining = Integer.bitCount(be.getVoxelMask());
-            player.displayClientMessage(Component.literal("Осталось частей камня: " + remaining + "/8"), true);
+            player.displayClientMessage(Component.literal("Осталось частей: " + remaining + "/8"), true);
         }
+    }
+
+    private static void dropChipLoot(ServerLevel level, BlockPos pos, BlockState original, int count) {
+        ItemStack drop;
+        if (original.is(Tags.Blocks.ORES_IRON)) {
+            drop = new ItemStack(ModItems.RAW_IRON_NUGGET.get(), count);
+        } else if (original.is(Tags.Blocks.ORES_GOLD)) {
+            drop = new ItemStack(ModItems.RAW_GOLD_NUGGET.get(), count);
+        } else if (original.is(Tags.Blocks.ORES_COPPER)) {
+            drop = new ItemStack(ModItems.RAW_COPPER_NUGGET.get(), count);
+        } else if (original.is(Tags.Blocks.ORES_COAL)) {
+            drop = new ItemStack(ModItems.COAL_FRAGMENT.get(), count);
+        } else if (original.is(Tags.Blocks.ORES)) {
+            // Для модовых и прочих руд: с шансом выпадает стандартный лут блока
+            if (level.random.nextFloat() < 0.25F * count) {
+                Block.dropResources(original, level, pos);
+            }
+            drop = new ItemStack(ModItems.STONE_PEBBLE.get(), 1);
+        } else {
+            drop = new ItemStack(ModItems.STONE_PEBBLE.get(), count);
+        }
+        Block.popResource(level, pos, drop);
     }
 
     private static int calculateTargetOctant(ServerLevel level, Player player, BlockPos pos) {
