@@ -32,7 +32,6 @@ public class BlueprintProjectionRenderer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null) return;
 
-        // Если игрок убрал книгу из руки — прячем проекцию
         if (!mc.player.getMainHandItem().is(ModItems.SURVIVAL_GUIDE.get())
                 && !mc.player.getOffhandItem().is(ModItems.SURVIVAL_GUIDE.get())) {
             return;
@@ -44,6 +43,7 @@ public class BlueprintProjectionRenderer {
         BlockPos origin = ClientBlueprintManager.getTargetPos();
         if (origin == null) return;
 
+        Map<BlockPos, BlockState> rotated = bp.getRotatedBlocks(ClientBlueprintManager.getRotation());
         PoseStack poseStack = event.getPoseStack();
         Vec3 cam = event.getCamera().getPosition();
         MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
@@ -52,17 +52,9 @@ public class BlueprintProjectionRenderer {
         poseStack.pushPose();
         poseStack.translate(-cam.x, -cam.y, -cam.z);
 
-        VertexConsumer lines = buffer.getBuffer(RenderType.lines());
-        for (Map.Entry<BlockPos, BlockState> entry : bp.getRotatedBlocks(ClientBlueprintManager.getRotation()).entrySet()) {
+        // Проход 1: отрисовка самих 3D-блоков проекции
+        for (Map.Entry<BlockPos, BlockState> entry : rotated.entrySet()) {
             BlockPos p = origin.offset(entry.getKey());
-
-            // Голубая голографическая рамка блока (как в The Forest)
-            LevelRenderer.renderLineBox(poseStack, lines,
-                    p.getX(), p.getY(), p.getZ(),
-                    p.getX() + 1.0, p.getY() + 1.0, p.getZ() + 1.0,
-                    0.35F, 0.78F, 1.0F, 0.85F);
-
-            // Полупрозрачная 3D-проекция самого блока внутри рамки
             poseStack.pushPose();
             poseStack.translate(p.getX() + 0.05, p.getY() + 0.05, p.getZ() + 0.05);
             poseStack.scale(0.9F, 0.9F, 0.9F);
@@ -70,8 +62,64 @@ public class BlueprintProjectionRenderer {
                     LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
         }
-
         buffer.endBatch();
-        poseStack.popPose();
+
+        // Проход 2: отрисовка голубых голографических рамок
+        VertexConsumer lines = buffer.getBuffer(RenderType.lines());
+        for (BlockPos rel : rotated.keySet()) {
+            BlockPos p = origin.offset(rel);
+            LevelRenderer.renderLineBox(poseStack, lines,
+                    p.getX(), p.getY(), p.getZ(),
+                    p.getX() +
+mkdir -p src/main/java/com/realharvest/block \
+         src/main/resources/assets/realharvest/blockstates \
+         src/main/resources/assets/realharvest/models/block
+
+# 1. Зажигалка (LighterItem) — поджигает землю, костры и чучела
+cat << 'EOF' > src/main/java/com/realharvest/item/LighterItem.java
+package com.realharvest.item;
+
+import com.realharvest.block.EffigyBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class LighterItem extends Item {
+    public LighterItem(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        BlockState state = level.getBlockState(pos);
+
+        // Поджиг чучела
+        if (state.getBlock() instanceof EffigyBlock && !state.getValue(EffigyBlock.LIT)) {
+            if (!level.isClientSide) {
+                level.setBlock(pos, state.setValue(EffigyBlock.LIT, true), Block.UPDATE_ALL);
+                level.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+
+        // Поджиг обычного блока
+        BlockPos firePos = pos.relative(context.getClickedFace());
+        if (BaseFireBlock.canBePlacedAt(level, firePos, context.getHorizontalDirection())) {
+            if (!level.isClientSide) {
+                level.setBlock(firePos, BaseFireBlock.getState(level, firePos), Block.UPDATE_ALL);
+                level.playSound(null, firePos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return InteractionResult.PASS;
     }
 }
