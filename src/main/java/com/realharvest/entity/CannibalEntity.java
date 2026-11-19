@@ -1,14 +1,18 @@
 package com.realharvest.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -19,15 +23,27 @@ import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 public class CannibalEntity extends Monster {
+    public static final int VARIANT_TRIBAL = 0;
+    public static final int VARIANT_SKINNY = 1;
+    public static final int VARIANT_LEADER = 2;
+    public static final int VARIANT_PALE = 3;
+
     private static final EntityDataAccessor<Boolean> DATA_CLIMBING =
             SynchedEntityData.defineId(CannibalEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_VARIANT =
+            SynchedEntityData.defineId(CannibalEntity.class, EntityDataSerializers.INT);
 
     public CannibalEntity(EntityType<? extends Monster> type, Level level) {
         super(type, level);
         this.xpReward = 8;
+        if (!level.isClientSide) {
+            this.setVariant(this.random.nextInt(4));
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -43,6 +59,41 @@ public class CannibalEntity extends Monster {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_CLIMBING, false);
+        this.entityData.define(DATA_VARIANT, VARIANT_TRIBAL);
+    }
+
+    public int getVariant() {
+        return this.entityData.get(DATA_VARIANT);
+    }
+
+    public void setVariant(int variant) {
+        this.entityData.set(DATA_VARIANT, Math.floorMod(variant, 4));
+    }
+
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+                                        MobSpawnType reason, @Nullable SpawnGroupData spawnData,
+                                        @Nullable CompoundTag dataTag) {
+        SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+        if (dataTag == null || !dataTag.contains("Variant")) {
+            this.setVariant(level.getRandom().nextInt(4));
+        }
+        return data;
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("Variant", this.getVariant());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("Variant")) {
+            this.setVariant(tag.getInt("Variant"));
+        }
     }
 
     @Override
