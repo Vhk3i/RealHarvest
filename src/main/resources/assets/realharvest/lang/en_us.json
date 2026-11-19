@@ -20,5 +20,6 @@
   "block.realharvest.spike_trap": "Spike Trap",
   "block.realharvest.effigy": "Effigy Totem",
   "block.realharvest.drying_rack": "Drying Rack",
-  "entity.realharvest.cannibal": "Cannibal"
+  "entity.realharvest.cannibal": "Cannibal",
+  "generator.realharvest.forest_island": "Forest Island"
 }
