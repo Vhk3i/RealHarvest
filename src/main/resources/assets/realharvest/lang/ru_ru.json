@@ -8,7 +8,17 @@
   "item.realharvest.survival_guide": "Книжка выживальщика",
   "item.realharvest.lighter": "Зажигалка",
   "item.realharvest.molotov": "Коктейль Молотова",
+  "item.realharvest.dried_meat": "Вяленое мясо",
+  "item.realharvest.bone_helmet": "Костяной шлем",
+  "item.realharvest.bone_chestplate": "Костяной нагрудник",
+  "item.realharvest.bone_leggings": "Костяные поножи",
+  "item.realharvest.bone_boots": "Костяные ботинки",
+  "item.realharvest.leaf_helmet": "Шлем из листьев",
+  "item.realharvest.leaf_chestplate": "Нагрудник из листьев",
+  "item.realharvest.leaf_leggings": "Поножи из листьев",
+  "item.realharvest.leaf_boots": "Ботинки из листьев",
   "block.realharvest.spike_trap": "Ловушка с шипами",
   "block.realharvest.effigy": "Пугающее чучело",
+  "block.realharvest.drying_rack": "Сушилка для мяса",
   "entity.realharvest.cannibal": "Абориген"
 }

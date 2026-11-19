@@ -1,6 +1,7 @@
 package com.realharvest.registry;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.block.DryingRackBlock;
 import com.realharvest.block.EffigyBlock;
 import com.realharvest.block.SpikeTrapBlock;
 import com.realharvest.mining.ChippedBlock;
@@ -17,26 +18,22 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> NOTCHED_LOG = BLOCKS.register("notched_log",
             () -> new NotchedLogBlock(BlockBehaviour.Properties.of()
-                    .strength(2.0f)
-                    .noOcclusion()
-                    .dynamicShape()));
+                    .strength(2.0f).noOcclusion().dynamicShape()));
 
     public static final RegistryObject<Block> CHIPPED_BLOCK = BLOCKS.register("chipped_block",
             () -> new ChippedBlock(BlockBehaviour.Properties.of()
-                    .strength(1.5f, 6.0f)
-                    .requiresCorrectToolForDrops()
-                    .noOcclusion()
-                    .dynamicShape()));
+                    .strength(1.5f, 6.0f).requiresCorrectToolForDrops().noOcclusion().dynamicShape()));
 
     public static final RegistryObject<Block> SPIKE_TRAP = BLOCKS.register("spike_trap",
             () -> new SpikeTrapBlock(BlockBehaviour.Properties.of()
-                    .strength(1.5f)
-                    .noOcclusion()
-                    .noCollission()));
+                    .strength(1.5f).noOcclusion().noCollission()));
 
     public static final RegistryObject<Block> EFFIGY = BLOCKS.register("effigy",
             () -> new EffigyBlock(BlockBehaviour.Properties.of()
-                    .strength(1.5f)
-                    .noOcclusion()
+                    .strength(1.5f).noOcclusion()
                     .lightLevel(state -> state.getValue(EffigyBlock.LIT) ? 14 : 0)));
+
+    public static final RegistryObject<Block> DRYING_RACK = BLOCKS.register("drying_rack",
+            () -> new DryingRackBlock(BlockBehaviour.Properties.of()
+                    .strength(1.5f).noOcclusion()));
 }

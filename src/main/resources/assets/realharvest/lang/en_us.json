@@ -8,7 +8,17 @@
   "item.realharvest.survival_guide": "Survival Guide",
   "item.realharvest.lighter": "Lighter",
   "item.realharvest.molotov": "Molotov Cocktail",
+  "item.realharvest.dried_meat": "Dried Meat",
+  "item.realharvest.bone_helmet": "Bone Helmet",
+  "item.realharvest.bone_chestplate": "Bone Chestplate",
+  "item.realharvest.bone_leggings": "Bone Leggings",
+  "item.realharvest.bone_boots": "Bone Boots",
+  "item.realharvest.leaf_helmet": "Leaf Helmet",
+  "item.realharvest.leaf_chestplate": "Leaf Chestplate",
+  "item.realharvest.leaf_leggings": "Leaf Leggings",
+  "item.realharvest.leaf_boots": "Leaf Boots",
   "block.realharvest.spike_trap": "Spike Trap",
   "block.realharvest.effigy": "Effigy Totem",
+  "block.realharvest.drying_rack": "Drying Rack",
   "entity.realharvest.cannibal": "Cannibal"
 }

@@ -1,6 +1,7 @@
 package com.realharvest.registry;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.block.DryingRackBlockEntity;
 import com.realharvest.mining.ChippedBlockEntity;
 import com.realharvest.tree.NotchedLogBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -19,4 +20,8 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<ChippedBlockEntity>> CHIPPED_BLOCK_BE =
             BLOCK_ENTITIES.register("chipped_block", () ->
                     BlockEntityType.Builder.of(ChippedBlockEntity::new, ModBlocks.CHIPPED_BLOCK.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<DryingRackBlockEntity>> DRYING_RACK_BE =
+            BLOCK_ENTITIES.register("drying_rack", () ->
+                    BlockEntityType.Builder.of(DryingRackBlockEntity::new, ModBlocks.DRYING_RACK.get()).build(null));
 }
