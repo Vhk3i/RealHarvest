@@ -3,6 +3,8 @@ package com.realharvest.entity;
 import com.realharvest.registry.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,16 +17,23 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnData {
@@ -36,6 +45,7 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
 
     private float angularVelocity = 0.8F;
     private float prevFallAngle = 0.0F;
+    private boolean playedCreak = false;
 
     public FallingTreeEntity(EntityType<?> type, Level level) {
         super(type, level);
@@ -80,6 +90,11 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
         this.prevFallAngle = getFallAngle();
 
         if (!level().isClientSide) {
+            if (!playedCreak) {
+                level().playSound(null, blockPosition(), SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1.4F, 0.55F);
+                playedCreak = true;
+            }
+
             float angle = getFallAngle();
             double rad = Math.toRadians(Math.max(angle, 5.0F));
             angularVelocity += (float) (0.35 * Math.sin(rad) + 0.08);
@@ -96,13 +111,42 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
     }
 
     private void onTreeLanded(ServerLevel level) {
+        int maxHeight = 1;
+        for (BlockPos rel : blocks.keySet()) {
+            if (rel.getY() > maxHeight) maxHeight = rel.getY();
+        }
+
+        // Звук тяжёлого падения дерева
+        BlockPos midPos = blockPosition().relative(fallDirection, Math.max(1, maxHeight / 2));
+        level.playSound(null, midPos, SoundEvents.WOOD_FALL, SoundSource.BLOCKS, 1.8F, 0.6F);
+        level.playSound(null, midPos, SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.BLOCKS, 0.6F, 0.5F);
+
+        // Урон сущностям вдоль линии падения
+        BlockPos endPos = blockPosition().relative(fallDirection, maxHeight + 1);
+        AABB impactBox = new AABB(blockPosition(), endPos).inflate(1.2, 1.5, 1.2);
+        List<LivingEntity> victims = level.getEntitiesOfClass(LivingEntity.class, impactBox);
+        for (LivingEntity victim : victims) {
+            victim.hurt(level.damageSources().fallingBlock(this), 8.0F);
+        }
+
+        // Разрушение листвы (частицы + палки) и дроп брёвен вдоль ствола
         for (Map.Entry<BlockPos, BlockState> entry : blocks.entrySet()) {
             BlockPos rel = entry.getKey();
             BlockState state = entry.getValue();
-
             BlockPos dropPos = blockPosition().relative(fallDirection, Math.max(1, rel.getY()));
+
             if (state.is(BlockTags.LOGS)) {
                 Block.dropResources(state, level, dropPos);
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state),
+                        dropPos.getX() + 0.5, dropPos.getY() + 0.5, dropPos.getZ() + 0.5,
+                        8, 0.4, 0.3, 0.4, 0.08);
+            } else if (state.is(BlockTags.LEAVES)) {
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state),
+                        dropPos.getX() + 0.5, dropPos.getY() + 0.6, dropPos.getZ() + 0.5,
+                        6, 0.6, 0.4, 0.6, 0.05);
+                if (level.random.nextFloat() < 0.15F) {
+                    Block.popResource(level, dropPos, new ItemStack(Items.STICK));
+                }
             }
         }
     }
