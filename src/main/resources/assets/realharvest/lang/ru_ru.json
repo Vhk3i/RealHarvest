@@ -21,5 +21,7 @@
   "block.realharvest.effigy": "Пугающее чучело",
   "block.realharvest.drying_rack": "Сушилка для мяса",
   "entity.realharvest.cannibal": "Абориген",
-  "generator.realharvest.forest_island": "Остров (The Forest)"
+  "generator.realharvest.forest_island": "Остров (The Forest)",
+  "item.realharvest.bandage": "Бинт",
+  "item.realharvest.splint": "Шина для переломов"
 }

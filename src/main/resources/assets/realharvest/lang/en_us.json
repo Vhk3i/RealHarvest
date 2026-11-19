@@ -21,5 +21,7 @@
   "block.realharvest.effigy": "Effigy Totem",
   "block.realharvest.drying_rack": "Drying Rack",
   "entity.realharvest.cannibal": "Cannibal",
-  "generator.realharvest.forest_island": "Forest Island"
+  "generator.realharvest.forest_island": "Forest Island",
+  "item.realharvest.bandage": "Bandage",
+  "item.realharvest.splint": "Splint"
 }

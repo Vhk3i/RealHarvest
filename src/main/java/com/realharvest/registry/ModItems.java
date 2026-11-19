@@ -3,6 +3,7 @@ package com.realharvest.registry;
 import com.realharvest.RealHarvest;
 import com.realharvest.armor.ModArmorMaterials;
 import com.realharvest.item.LighterItem;
+import com.realharvest.item.MedicalItem;
 import com.realharvest.item.MolotovItem;
 import com.realharvest.item.SurvivalGuideItem;
 import net.minecraft.world.food.FoodProperties;
@@ -65,4 +66,9 @@ public class ModItems {
             ITEMS.register("leaf_leggings", () -> new ArmorItem(ModArmorMaterials.LEAF, ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final RegistryObject<Item> LEAF_BOOTS =
             ITEMS.register("leaf_boots", () -> new ArmorItem(ModArmorMaterials.LEAF, ArmorItem.Type.BOOTS, new Item.Properties()));
+
+    public static final RegistryObject<Item> BANDAGE =
+            ITEMS.register("bandage", () -> new MedicalItem(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> SPLINT =
+            ITEMS.register("splint", () -> new MedicalItem(new Item.Properties().stacksTo(16)));
 }

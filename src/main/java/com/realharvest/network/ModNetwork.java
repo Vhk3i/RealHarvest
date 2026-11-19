@@ -1,8 +1,10 @@
 package com.realharvest.network;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.network.packet.C2SHealLimbPacket;
 import com.realharvest.network.packet.C2SPlaceBlueprintPacket;
 import com.realharvest.network.packet.S2CBlockChipEffectPacket;
+import com.realharvest.network.packet.S2CSyncBodyHealthPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -32,6 +34,18 @@ public class ModNetwork {
                 .encoder(C2SPlaceBlueprintPacket::encode)
                 .decoder(C2SPlaceBlueprintPacket::decode)
                 .consumerMainThread(C2SPlaceBlueprintPacket::handle)
+                .add();
+
+        CHANNEL.messageBuilder(S2CSyncBodyHealthPacket.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2CSyncBodyHealthPacket::encode)
+                .decoder(S2CSyncBodyHealthPacket::decode)
+                .consumerMainThread(S2CSyncBodyHealthPacket::handle)
+                .add();
+
+        CHANNEL.messageBuilder(C2SHealLimbPacket.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SHealLimbPacket::encode)
+                .decoder(C2SHealLimbPacket::decode)
+                .consumerMainThread(C2SHealLimbPacket::handle)
                 .add();
     }
 
