@@ -1,12 +1,14 @@
 package com.realharvest.event;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.entity.FallingTreeEntity;
 import com.realharvest.mining.ChippedBlockEntity;
 import com.realharvest.mining.VoxelShapeCache;
 import com.realharvest.network.ModNetwork;
 import com.realharvest.network.packet.S2CBlockChipEffectPacket;
 import com.realharvest.registry.ModBlocks;
 import com.realharvest.tree.NotchedLogBlockEntity;
+import com.realharvest.tree.TreeDetector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -19,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -27,6 +30,8 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = RealHarvest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventHandler {
@@ -42,7 +47,6 @@ public class ForgeEventHandler {
         BlockState state = event.getState();
         ItemStack held = player.getMainHandItem();
 
-        // 1. Рубка деревьев топором
         if (held.getItem() instanceof AxeItem) {
             if (state.is(BlockTags.LOGS) || state.is(ModBlocks.NOTCHED_LOG.get())) {
                 handleTreeChop(event, level, player, pos, state, held);
@@ -50,7 +54,6 @@ public class ForgeEventHandler {
             }
         }
 
-        // 2. Откалывание камня и руд киркой
         if (held.getItem() instanceof PickaxeItem) {
             boolean isStoneOrOre = state.is(Tags.Blocks.STONE)
                     || state.is(BlockTags.BASE_STONE_OVERWORLD)
@@ -90,8 +93,16 @@ public class ForgeEventHandler {
             player.displayClientMessage(Component.literal(
                     "Зарубка: " + be.getTotalChops() + "/" + NotchedLogBlockEntity.MAX_CHOPS), true);
         } else {
-            // В Фазе 2 здесь будет запуск BFS и спавн FallingTreeEntity
-            player.displayClientMessage(Component.literal("Дерево подрублено!"), true);
+            Map<BlockPos, BlockState> treeBlocks = TreeDetector.detectTree(level, pos, original);
+            if (!treeBlocks.isEmpty()) {
+                event.setCanceled(true);
+                for (BlockPos blockPos : treeBlocks.keySet()) {
+                    level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                }
+                Direction fallDir = hitSide.getOpposite();
+                FallingTreeEntity entity = new FallingTreeEntity(level, pos, treeBlocks, fallDir);
+                level.addFreshEntity(entity);
+            }
         }
     }
 
