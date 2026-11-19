@@ -1,5 +1,6 @@
 package com.realharvest.network.packet;
 
+import com.realharvest.client.FirstPersonChopAnimator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -40,6 +41,7 @@ public class S2CBlockChipEffectPacket {
             if (mc.level != null) {
                 BlockState state = Block.stateById(msg.blockStateId);
                 mc.level.addDestroyBlockEffect(msg.pos, state);
+                FirstPersonChopAnimator.triggerImpact();
             }
         });
         ctx.get().setPacketHandled(true);
