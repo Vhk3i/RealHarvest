@@ -70,56 +70,11 @@ public class BlueprintProjectionRenderer {
             BlockPos p = origin.offset(rel);
             LevelRenderer.renderLineBox(poseStack, lines,
                     p.getX(), p.getY(), p.getZ(),
-                    p.getX() +
-mkdir -p src/main/java/com/realharvest/block \
-         src/main/resources/assets/realharvest/blockstates \
-         src/main/resources/assets/realharvest/models/block
-
-# 1. Зажигалка (LighterItem) — поджигает землю, костры и чучела
-cat << 'EOF' > src/main/java/com/realharvest/item/LighterItem.java
-package com.realharvest.item;
-
-import com.realharvest.block.EffigyBlock;
-import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-
-public class LighterItem extends Item {
-    public LighterItem(Properties properties) {
-        super(properties);
-    }
-
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        BlockState state = level.getBlockState(pos);
-
-        // Поджиг чучела
-        if (state.getBlock() instanceof EffigyBlock && !state.getValue(EffigyBlock.LIT)) {
-            if (!level.isClientSide) {
-                level.setBlock(pos, state.setValue(EffigyBlock.LIT, true), Block.UPDATE_ALL);
-                level.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
-            }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+                    p.getX() + 1.0, p.getY() + 1.0, p.getZ() + 1.0,
+                    0.35F, 0.78F, 1.0F, 0.85F);
         }
+        buffer.endBatch(RenderType.lines());
 
-        // Поджиг обычного блока
-        BlockPos firePos = pos.relative(context.getClickedFace());
-        if (BaseFireBlock.canBePlacedAt(level, firePos, context.getHorizontalDirection())) {
-            if (!level.isClientSide) {
-                level.setBlock(firePos, BaseFireBlock.getState(level, firePos), Block.UPDATE_ALL);
-                level.playSound(null, firePos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
-            }
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        }
-        return InteractionResult.PASS;
+        poseStack.popPose();
     }
 }
