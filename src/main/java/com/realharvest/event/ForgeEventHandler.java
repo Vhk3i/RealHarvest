@@ -31,6 +31,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -39,6 +40,32 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = RealHarvest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventHandler {
+
+    @SubscribeEvent
+    public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
+        Player player = event.getEntity();
+        ItemStack held = player.getMainHandItem();
+        BlockState state = event.getState();
+
+        // Ускоряем каждый отдельный удар топором по дереву, чтобы рубка была быстрой и ритмичной
+        if (held.getItem() instanceof AxeItem) {
+            if (state.is(BlockTags.LOGS) || state.is(ModBlocks.NOTCHED_LOG.get())) {
+                event.setNewSpeed(event.getNewSpeed() * 4.0F);
+                return;
+            }
+        }
+
+        // Ускоряем откалывание кусков камня и руд киркой
+        if (held.getItem() instanceof PickaxeItem) {
+            boolean isStoneOrOre = state.is(Tags.Blocks.STONE)
+                    || state.is(BlockTags.BASE_STONE_OVERWORLD)
+                    || state.is(Tags.Blocks.ORES)
+                    || state.is(ModBlocks.CHIPPED_BLOCK.get());
+            if (isStoneOrOre) {
+                event.setNewSpeed(event.getNewSpeed() * 4.5F);
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
@@ -162,7 +189,6 @@ public class ForgeEventHandler {
         } else if (original.is(Tags.Blocks.ORES_COAL)) {
             drop = new ItemStack(ModItems.COAL_FRAGMENT.get(), count);
         } else if (original.is(Tags.Blocks.ORES)) {
-            // Для модовых и прочих руд: с шансом выпадает стандартный лут блока
             if (level.random.nextFloat() < 0.25F * count) {
                 Block.dropResources(original, level, pos);
             }

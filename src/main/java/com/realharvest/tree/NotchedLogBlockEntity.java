@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -16,10 +17,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class NotchedLogBlockEntity extends BlockEntity {
-    public static final int MAX_CHOPS = 5;
+    public static final int MAX_CHOPS = 4;
 
     private BlockState originalState = Blocks.OAK_LOG.defaultBlockState();
-    private final byte[] sideNotches = new byte[4]; // NORTH, SOUTH, WEST, EAST
+    private final byte[] sideNotches = new byte[4]; // 0=SOUTH, 1=WEST, 2=NORTH, 3=EAST (get2DDataValue)
     private int totalChops = 0;
     private Direction lastHitSide = Direction.NORTH;
 
@@ -94,5 +95,12 @@ public class NotchedLogBlockEntity extends BlockEntity {
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        if (pkt.getTag() != null) {
+            load(pkt.getTag());
+        }
     }
 }
