@@ -1,6 +1,7 @@
 package com.realharvest.client;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.client.render.CannibalRenderer;
 import com.realharvest.client.render.ChippedBlockEntityRenderer;
 import com.realharvest.client.render.FallingTreeRenderer;
 import com.realharvest.client.render.NotchedLogBlockEntityRenderer;
@@ -17,6 +18,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.FALLING_TREE.get(), FallingTreeRenderer::new);
+        event.registerEntityRenderer(ModEntities.CANNIBAL.get(), CannibalRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.NOTCHED_LOG_BE.get(), NotchedLogBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.CHIPPED_BLOCK_BE.get(), ChippedBlockEntityRenderer::new);
     }

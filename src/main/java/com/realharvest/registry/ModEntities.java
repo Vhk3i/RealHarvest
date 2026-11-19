@@ -1,6 +1,7 @@
 package com.realharvest.registry;
 
 import com.realharvest.RealHarvest;
+import com.realharvest.entity.CannibalEntity;
 import com.realharvest.entity.FallingTreeEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -19,4 +20,11 @@ public class ModEntities {
                     .clientTrackingRange(10)
                     .updateInterval(1)
                     .build("falling_tree"));
+
+    public static final RegistryObject<EntityType<CannibalEntity>> CANNIBAL =
+            ENTITIES.register("cannibal", () -> EntityType.Builder
+                    .of(CannibalEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.8F)
+                    .clientTrackingRange(8)
+                    .build("cannibal"));
 }

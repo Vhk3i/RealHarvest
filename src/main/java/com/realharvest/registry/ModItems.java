@@ -2,6 +2,7 @@ package com.realharvest.registry;
 
 import com.realharvest.RealHarvest;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -24,4 +25,8 @@ public class ModItems {
 
     public static final RegistryObject<Item> COAL_FRAGMENT =
             ITEMS.register("coal_fragment", () -> new Item(new Item.Properties()));
+
+    public static final RegistryObject<Item> CANNIBAL_SPAWN_EGG =
+            ITEMS.register("cannibal_spawn_egg", () -> new ForgeSpawnEggItem(
+                    ModEntities.CANNIBAL, 0x7A736A, 0x7D1212, new Item.Properties()));
 }

@@ -3,5 +3,7 @@
   "item.realharvest.raw_iron_nugget": "Raw Iron Nugget",
   "item.realharvest.raw_gold_nugget": "Raw Gold Nugget",
   "item.realharvest.raw_copper_nugget": "Raw Copper Nugget",
-  "item.realharvest.coal_fragment": "Coal Fragment"
+  "item.realharvest.coal_fragment": "Coal Fragment",
+  "item.realharvest.cannibal_spawn_egg": "Cannibal Spawn Egg",
+  "entity.realharvest.cannibal": "Cannibal"
 }
